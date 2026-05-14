@@ -5,11 +5,17 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #000; overflow: hidden; height: 100vh; width: 100vw; }
-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+#bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 3;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
 #membrane {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none;
-  z-index: 5;
+  z-index: 4;
+  mix-blend-mode: screen;
 }
 #title {
   position: fixed;
@@ -24,6 +30,49 @@ canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
   pointer-events: none;
   z-index: 10;
 }
+#capsulas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.capsula {
+  position: absolute;
+  width: 38vw;
+  max-width: 340px;
+  min-width: 140px;
+  pointer-events: all;
+  cursor: pointer;
+}
+.capsula video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+@keyframes float1 { 0%,100%{transform:translateY(0px) rotate(-1deg)} 50%{transform:translateY(-12px) rotate(1deg)} }
+@keyframes float2 { 0%,100%{transform:translateY(-8px) rotate(2deg)} 50%{transform:translateY(6px) rotate(-1deg)} }
+@keyframes float3 { 0%,100%{transform:translateY(4px) rotate(1deg)} 50%{transform:translateY(-10px) rotate(-2deg)} }
+@keyframes float4 { 0%,100%{transform:translateY(-4px) rotate(-2deg)} 50%{transform:translateY(8px) rotate(1deg)} }
+#cap0 { animation: float1 5.2s ease-in-out infinite; }
+#cap1 { animation: float2 6.1s ease-in-out infinite; }
+#cap2 { animation: float3 4.8s ease-in-out infinite; }
+#cap3 { animation: float4 5.7s ease-in-out infinite; }
+.capsula.active video {
+  filter: brightness(1.4) saturate(1.3);
+}
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2); opacity: 0; }
+}
+.pulse-ring {
+  position: fixed;
+  border-radius: 50%;
+  background: rgba(200, 60, 40, 0.3);
+  animation: pulse-ring 0.9s ease-out forwards;
+  pointer-events: none;
+  z-index: 5;
+}
 </style>
 </head>
 <body>
@@ -31,6 +80,22 @@ canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
 
 <!-- SHADER FONDO -->
 <canvas id="bg"></canvas>
+
+<!-- CÁPSULAS DE VIDEO -->
+<div id="capsulas">
+  <div class="capsula" id="cap0" style="left: 5vw; top: 5vh;">
+    <video autoplay loop muted playsinline src="assets/videos/capsula1.mp4"></video>
+  </div>
+  <div class="capsula" id="cap1" style="left: 57vw; top: 5vh;">
+    <video autoplay loop muted playsinline src="assets/videos/capsula2.mp4"></video>
+  </div>
+  <div class="capsula" id="cap2" style="left: 5vw; top: 55vh;">
+    <video autoplay loop muted playsinline src="assets/videos/capsula3.mp4"></video>
+  </div>
+  <div class="capsula" id="cap3" style="left: 57vw; top: 55vh;">
+    <video autoplay loop muted playsinline src="assets/videos/capsula4.mp4"></video>
+  </div>
+</div>
 
 <!-- MEMBRANA ENCIMA -->
 <canvas id="membrane"></canvas>
@@ -265,6 +330,32 @@ function loop(t) {
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
+
+// ---- INTERACCIÓN CÁPSULAS ----
+document.querySelectorAll('.capsula').forEach((cap, i) => {
+  function trigger(e) {
+    e.preventDefault();
+    const rect = cap.getBoundingClientRect();
+    touchX = (rect.left + rect.width / 2) / window.innerWidth;
+    touchY = 1.0 - (rect.top + rect.height / 2) / window.innerHeight;
+    pulse = 1.0;
+
+    cap.classList.add('active');
+    setTimeout(() => cap.classList.remove('active'), 500);
+
+    const ring = document.createElement('div');
+    ring.className = 'pulse-ring';
+    const size = Math.max(rect.width, rect.height);
+    ring.style.cssText = `width:${size}px;height:${size}px;left:${rect.left + rect.width/2 - size/2}px;top:${rect.top + rect.height/2 - size/2}px;`;
+    document.body.appendChild(ring);
+    setTimeout(() => ring.remove(), 1000);
+
+    console.log('capsula', i, 'triggered');
+    // Aquí irá: reproducir sample de audio
+  }
+  cap.addEventListener('click', trigger);
+  cap.addEventListener('touchstart', trigger, { passive: false });
+});
 </script>
 </body>
 </html>
