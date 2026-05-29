@@ -1,53 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #000; overflow: hidden; height: 100vh; width: 100vw; }
 #bg {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 1;
-  pointer-events: none;
+  z-index: 3; mix-blend-mode: screen; pointer-events: none; opacity: 0.85;
 }
 #membrane {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 5;
+  pointer-events: none; z-index: 5; mix-blend-mode: screen; opacity: 0.25;
 }
 #title {
-  position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'Andale Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.4em;
-  color: rgba(220, 180, 160, 0.35);
-  text-transform: uppercase;
-  pointer-events: none;
-  z-index: 10;
+  position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+  font-family: 'Courier Prime', 'Courier New', monospace; font-size: 11px; letter-spacing: 0.4em;
+  color: rgba(220, 180, 160, 0.35); text-transform: uppercase;
+  pointer-events: none; z-index: 10;
 }
 #capsulas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 3;
-  pointer-events: none;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 2; pointer-events: none;
 }
 .capsula {
-  position: absolute;
-  width: 38vw;
-  max-width: 340px;
-  min-width: 140px;
-  pointer-events: all;
-  cursor: pointer;
+  position: absolute; width: 38vw; max-width: 340px; min-width: 140px;
+  pointer-events: all; cursor: pointer;
 }
-.capsula video {
-  width: 100%;
-  height: auto;
-  display: block;
-}
+.capsula video { width: 100%; height: auto; display: block; }
 @keyframes float1 { 0%,100%{transform:translateY(0px) rotate(-1deg)} 50%{transform:translateY(-12px) rotate(1deg)} }
 @keyframes float2 { 0%,100%{transform:translateY(-8px) rotate(2deg)} 50%{transform:translateY(6px) rotate(-1deg)} }
 @keyframes float3 { 0%,100%{transform:translateY(4px) rotate(1deg)} 50%{transform:translateY(-10px) rotate(-2deg)} }
@@ -56,304 +38,320 @@ body { background: #000; overflow: hidden; height: 100vh; width: 100vw; }
 #cap1 { animation: float2 6.1s ease-in-out infinite; }
 #cap2 { animation: float3 4.8s ease-in-out infinite; }
 #cap3 { animation: float4 5.7s ease-in-out infinite; }
-.capsula.active video {
-  filter: brightness(1.4) saturate(1.3);
-}
+.capsula.active video { filter: brightness(1.4) saturate(1.3); }
 @keyframes pulse-ring {
   0% { transform: scale(1); opacity: 0.6; }
   100% { transform: scale(2); opacity: 0; }
 }
 .pulse-ring {
-  position: fixed;
-  border-radius: 50%;
-  background: rgba(200, 60, 40, 0.3);
-  animation: pulse-ring 0.9s ease-out forwards;
-  pointer-events: none;
-  z-index: 4;
+  position: fixed; border-radius: 50%; background: rgba(200, 60, 40, 0.3);
+  animation: pulse-ring 0.9s ease-out forwards; pointer-events: none; z-index: 4;
 }
+#subtitulo-wrap {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; z-index: 9; padding: 38vw 10vw 28vw; box-sizing: border-box;
+}
+#subtitulo {
+  text-align: center; font-family: 'Courier Prime', 'Courier New', monospace;
+  font-size: clamp(11px, 3.2vw, 18px); line-height: 1.8; letter-spacing: 0.04em;
+  color: rgba(230, 200, 180, 0); pointer-events: none; transition: color 1s ease;
+}
+#subtitulo.visible { color: rgba(230, 200, 180, 0.88); }
+#subtitulo.fadeout { color: rgba(230, 200, 180, 0); transition: color 2.5s ease; }
 </style>
 </head>
 <body>
 <div id="title">tender</div>
 
-<!-- SHADER FONDO -->
+<canvas id="globulos" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 <canvas id="bg"></canvas>
 
-<!-- CÁPSULAS DE VIDEO -->
 <div id="capsulas">
-  <div class="capsula" id="cap0" style="left: 5vw; top: 5vh;">
+  <div class="capsula" id="cap0" style="left: 5vw; top: 20vh;">
     <video autoplay loop muted playsinline src="assets/videos/capsula1.mp4"></video>
   </div>
-  <div class="capsula" id="cap1" style="left: 57vw; top: 5vh;">
+  <div class="capsula" id="cap1" style="left: 57vw; top: 20vh;">
     <video autoplay loop muted playsinline src="assets/videos/capsula2.mp4"></video>
   </div>
-  <div class="capsula" id="cap2" style="left: 5vw; top: 55vh;">
+  <div class="capsula" id="cap2" style="left: 5vw; top: 58vh;">
     <video autoplay loop muted playsinline src="assets/videos/capsula3.mp4"></video>
   </div>
-  <div class="capsula" id="cap3" style="left: 57vw; top: 55vh;">
+  <div class="capsula" id="cap3" style="left: 57vw; top: 58vh;">
     <video autoplay loop muted playsinline src="assets/videos/capsula4.mp4"></video>
   </div>
 </div>
 
-<!-- MEMBRANA ENCIMA -->
 <canvas id="membrane"></canvas>
+<div id="subtitulo-wrap"><div id="subtitulo"></div></div>
 
 <script>
-// ---- SHADER FONDO: carne borde a borde ----
+// ---- POOL DE 12 SAMPLES ----
+const pool = [
+  { audio: 'assets/audio/sample01.mp3', texto: 'La dulzura provoca violencia, ya que no le ofrece ninguna presa posible al poder. No es pasividad — es una forma de presencia que el poder no sabe cómo capturar.' },
+  { audio: 'assets/audio/sample02.mp3', texto: 'La dulzura hace aparecer la distancia entre lo que está ahí y lo que escapa. Lo carnal y lo espiritual, pero no solo eso, también todas las distancias, las elipsis, en la lengua, en lo visible.' },
+  { audio: 'assets/audio/sample03.mp3', texto: 'Es una pasividad activa que puede devenir una fuerza de resistencia simbólica prodigiosa. A tal título estar, a la vez, en el centro de la ética y de lo político. Su elaboración es también un arte de vivir que requirió milenarios.' },
+  { audio: 'assets/audio/sample04.mp3', texto: 'La dulzura es política. No se pliega, no otorga ningún plazo, ninguna excusa. Actúa en el presente y no negocia con lo que la quiere domesticar.' },
+  { audio: 'assets/audio/sample05.mp3', texto: 'Lo incisivo de la dulzura es su posible borradura, y es eso, precisamente, lo que nos aterroriza: que pueda ser la más alta expresión de la sensibilidad, su inteligencia y su fuerza, y, no obstante, desaparecer en cada momento.' },
+  { audio: 'assets/audio/sample06.mp3', texto: 'De la animalidad, la dulzura guarda el secreto. Un fundamental y paradójico salvajismo tan ajeno a toda forma de domesticación como la infancia.' },
+  { audio: 'assets/audio/sample07.mp3', texto: 'La dulzura. Es un verbo: se hace acto de dulzura. No se declara ni se promete — simplemente ocurre, en el gesto, en el contacto, en lo que no necesita ser nombrado para existir.' },
+  { audio: 'assets/audio/sample08.mp3', texto: 'La dulzura es inquietante. La deseamos, pero es irrecibible. Cuando no son despreciados, los dulces son perseguidos o santificados. Los abandonamos porque la dulzura como potencia nos opone en realidad a nuestra propia debilidad.' },
+  { audio: 'assets/audio/sample09.mp3', texto: 'Atentar contra la dulzura es un crimen sin nombre que nuestra época comete a menudo en nombre de sus divinidades: la eficacia, la rapidez, la rentabilidad. Se mata a la dulzura con la dulzura.' },
+  { audio: 'assets/audio/sample10.mp3', texto: 'La penumbra es su tierra natal. Hay una dulzura de lo confuso, de la ambigüedad, de lo que nace y eclosiona. No necesita la luz para sobrevivir — prospera en los bordes, en los umbrales, en lo que todavía no tiene forma.' },
+  { audio: 'assets/audio/sample11.mp3', texto: 'Lo contrario de la dulzura no es la brutalidad ni la violencia misma, es la falsificación de la dulzura: lo que la pervierte mimándola. Todas las formas de acomodamientos, de suavidad adulterada, de papilla sentimental. Pervierten, más que la brutalidad, su naturaleza.' },
+  { audio: 'assets/audio/sample12.mp3', texto: 'Ni siquiera la amenaza de muerte puede contrarrestarla. La dulzura es política. No se pliega, no otorga ningún plazo, ninguna excusa. Es un verbo: se hace acto de dulzura. Concuerda con el presente e inquieta a todas las instituciones.' }
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Pool shuffled independiente por cápsula
+const capPools = [shuffle(pool), shuffle(pool), shuffle(pool), shuffle(pool)];
+const capIndices = [-1, -1, -1, -1];
+
+// Bloqueo mientras suena
+let sonando = false;
+let audioActual = null;
+
+// ---- SUBTÍTULO ----
+const subTexto = document.getElementById('subtitulo');
+let subtituloTimer = null;
+
+function mostrarTexto(texto, duracionMs) {
+  clearTimeout(subtituloTimer);
+  subTexto.classList.remove('visible', 'fadeout');
+  subTexto.textContent = texto;
+  setTimeout(() => subTexto.classList.add('visible'), 50);
+  subtituloTimer = setTimeout(() => {
+    subTexto.classList.remove('visible');
+    subTexto.classList.add('fadeout');
+    setTimeout(() => subTexto.classList.remove('fadeout'), 2500);
+  }, duracionMs + 500);
+}
+
+// Parar audio al salir o bloquear móvil
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && audioActual) {
+    audioActual.pause();
+    audioActual.currentTime = 0;
+    audioActual = null;
+    sonando = false;
+    subTexto.classList.remove('visible');
+    subTexto.classList.add('fadeout');
+    setTimeout(() => subTexto.classList.remove('fadeout'), 2500);
+  }
+});
+
+// ---- SHADERS ----
 const bg = document.getElementById('bg');
 const gl = bg.getContext('webgl');
-
-function resize() {
-  bg.width = window.innerWidth;
-  bg.height = window.innerHeight;
-  gl.viewport(0, 0, bg.width, bg.height);
-  mem.width = window.innerWidth;
-  mem.height = window.innerHeight;
-  glm.viewport(0, 0, mem.width, mem.height);
-}
-
-const vertSrc = `
-attribute vec2 a_pos;
-void main() { gl_Position = vec4(a_pos, 0, 1); }
-`;
-
-const fragBg = `
-precision highp float;
-uniform float u_time;
-uniform vec2 u_res;
-uniform vec2 u_touch;
-uniform float u_pulse;
-
-float hash(vec2 p) {
-  p = fract(p * vec2(234.34, 435.345));
-  p += dot(p, p + 34.23);
-  return fract(p.x * p.y);
-}
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  f = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(hash(i), hash(i+vec2(1,0)), f.x),
-    mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y);
-}
-float fbm(vec2 p) {
-  float v = 0.0; float amp = 0.5; float freq = 1.0;
-  for(int i = 0; i < 6; i++) {
-    v += amp * noise(p * freq);
-    freq *= 2.1; amp *= 0.48;
-    p += vec2(0.3, 0.7);
-  }
-  return v;
-}
-
-void main() {
-  vec2 uv = gl_FragCoord.xy / u_res;
-  vec2 p = uv * 2.0 - 1.0;
-  p.x *= u_res.x / u_res.y;
-  float t = u_time * 0.18;
-
-  vec2 q = vec2(fbm(p + t*0.3), fbm(p + vec2(1.7,9.2) + t*0.25));
-  vec2 r = vec2(fbm(p + 1.5*q + vec2(1.7,9.2) + t*0.15), fbm(p + 1.5*q + vec2(8.3,2.8) + t*0.12));
-  float f = fbm(p + 1.5*r + t*0.08);
-
-  float breath = sin(t * 2.2) * 0.5 + 0.5;
-  breath = breath * 0.06 + 0.97;
-
-  float touchDist = length(uv - u_touch);
-  float pulse = u_pulse * smoothstep(0.5, 0.0, touchDist) * sin(touchDist * 20.0 - u_time * 8.0);
-
-  f = f * breath + pulse * 0.15;
-
-  // Sin forma oval — llena toda la pantalla
-  // Variacion de tono por zona para que no sea plano
-  float zoneTone = fbm(p * 0.4 + vec2(3.1, 1.7)) * 0.3;
-  f = clamp(f + zoneTone * 0.2, 0.0, 1.0);
-
-  vec3 col1 = vec3(0.10, 0.02, 0.02);
-  vec3 col2 = vec3(0.38, 0.08, 0.06);
-  vec3 col3 = vec3(0.62, 0.20, 0.12);
-  vec3 col4 = vec3(0.80, 0.45, 0.32);
-  vec3 col5 = vec3(0.90, 0.68, 0.55);
-
-  vec3 col;
-  if(f < 0.25) col = mix(col1, col2, f/0.25);
-  else if(f < 0.5) col = mix(col2, col3, (f-0.25)/0.25);
-  else if(f < 0.75) col = mix(col3, col4, (f-0.5)/0.25);
-  else col = mix(col4, col5, (f-0.75)/0.25);
-
-  float veins = sin(fbm(p * 4.0 + t*0.05) * 20.0) * 0.035;
-  col -= veins;
-  col = clamp(col, 0.0, 1.0);
-
-  gl_FragColor = vec4(col, 1.0);
-}
-`;
-
-// ---- SHADER MEMBRANA ----
 const mem = document.getElementById('membrane');
 const glm = mem.getContext('webgl');
 
+function resize() {
+  bg.width = window.innerWidth; bg.height = window.innerHeight;
+  gl.viewport(0, 0, bg.width, bg.height);
+  mem.width = window.innerWidth; mem.height = window.innerHeight;
+  glm.viewport(0, 0, mem.width, mem.height);
+}
+
+const vertSrc = `attribute vec2 a_pos; void main() { gl_Position = vec4(a_pos, 0, 1); }`;
+
+const fragBg = `
+precision highp float;
+uniform float u_time; uniform vec2 u_res; uniform vec2 u_touch; uniform float u_pulse;
+float hash(vec2 p) { p=fract(p*vec2(234.34,435.345)); p+=dot(p,p+34.23); return fract(p.x*p.y); }
+float noise(vec2 p) { vec2 i=floor(p); vec2 f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y); }
+float fbm(vec2 p) { float v=0.0; float amp=0.5; float freq=1.0; for(int i=0;i<6;i++){v+=amp*noise(p*freq);freq*=2.1;amp*=0.48;p+=vec2(0.3,0.7);} return v; }
+void main() {
+  vec2 uv=gl_FragCoord.xy/u_res; vec2 p=uv*2.0-1.0; p.x*=u_res.x/u_res.y;
+  float t=u_time*0.18;
+  vec2 q=vec2(fbm(p+t*0.3),fbm(p+vec2(1.7,9.2)+t*0.25));
+  vec2 r=vec2(fbm(p+1.5*q+vec2(1.7,9.2)+t*0.15),fbm(p+1.5*q+vec2(8.3,2.8)+t*0.12));
+  float f=fbm(p+1.5*r+t*0.08);
+  float breath=sin(t*2.2)*0.5+0.5; breath=breath*0.06+0.97;
+  float touchDist=length(uv-u_touch);
+  float pulse=u_pulse*smoothstep(0.5,0.0,touchDist)*sin(touchDist*20.0-u_time*8.0);
+  f=f*breath+pulse*0.15;
+  float zoneTone=fbm(p*0.4+vec2(3.1,1.7))*0.3;
+  f=clamp(f+zoneTone*0.2,0.0,1.0);
+  vec3 col1=vec3(0.10,0.02,0.02); vec3 col2=vec3(0.38,0.08,0.06); vec3 col3=vec3(0.62,0.20,0.12); vec3 col4=vec3(0.80,0.45,0.32); vec3 col5=vec3(0.90,0.68,0.55);
+  vec3 col;
+  if(f<0.25) col=mix(col1,col2,f/0.25);
+  else if(f<0.5) col=mix(col2,col3,(f-0.25)/0.25);
+  else if(f<0.75) col=mix(col3,col4,(f-0.5)/0.25);
+  else col=mix(col4,col5,(f-0.75)/0.25);
+  float veins=sin(fbm(p*4.0+t*0.05)*20.0)*0.035; col-=veins; col=clamp(col,0.0,1.0);
+  gl_FragColor=vec4(col,1.0);
+}`;
+
 const fragMem = `
 precision highp float;
-uniform float u_time;
-uniform vec2 u_res;
-
-float hash(vec2 p) {
-  p = fract(p * vec2(234.34, 435.345));
-  p += dot(p, p + 34.23);
-  return fract(p.x * p.y);
-}
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  f = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(hash(i), hash(i+vec2(1,0)), f.x),
-    mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y);
-}
-float fbm(vec2 p) {
-  float v = 0.0; float amp = 0.5; float freq = 1.0;
-  for(int i = 0; i < 4; i++) {
-    v += amp * noise(p * freq);
-    freq *= 2.2; amp *= 0.45;
-    p += vec2(0.5, 0.3);
-  }
-  return v;
-}
-
+uniform float u_time; uniform vec2 u_res;
+float hash(vec2 p) { p=fract(p*vec2(234.34,435.345)); p+=dot(p,p+34.23); return fract(p.x*p.y); }
+float noise(vec2 p) { vec2 i=floor(p); vec2 f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y); }
+float fbm(vec2 p) { float v=0.0; float amp=0.5; float freq=1.0; for(int i=0;i<4;i++){v+=amp*noise(p*freq);freq*=2.2;amp*=0.45;p+=vec2(0.5,0.3);} return v; }
 void main() {
-  vec2 uv = gl_FragCoord.xy / u_res;
-  vec2 p = uv * 2.0 - 1.0;
-  p.x *= u_res.x / u_res.y;
-  float t = u_time * 0.08;
-
-  // Ruido muy lento y suave
-  float f = fbm(p * 1.8 + t);
-  f = f * 0.5 + 0.5;
-
-  // Solo visible en zonas concretas — muy sutil
-  float opacity = (f - 0.48) * 0.18;
-  opacity = clamp(opacity, 0.0, 0.12);
-
-  // Color membrana: carne muy clara casi rosada translucida
-  vec3 col = vec3(0.75, 0.28, 0.18);
-
-  gl_FragColor = vec4(col, opacity);
-}
-`;
+  vec2 uv=gl_FragCoord.xy/u_res; vec2 p=uv*2.0-1.0; p.x*=u_res.x/u_res.y;
+  float t=u_time*0.08;
+  float f=fbm(p*1.8+t); f=f*0.5+0.5;
+  float opacity=(f-0.48)*0.18; opacity=clamp(opacity,0.0,0.12);
+  gl_FragColor=vec4(0.75,0.28,0.18,opacity);
+}`;
 
 function makeProgram(g, vSrc, fSrc) {
-  function compile(type, src) {
-    const s = g.createShader(type);
-    g.shaderSource(s, src);
-    g.compileShader(s);
-    return s;
-  }
-  const p = g.createProgram();
-  g.attachShader(p, compile(g.VERTEX_SHADER, vSrc));
-  g.attachShader(p, compile(g.FRAGMENT_SHADER, fSrc));
-  g.linkProgram(p);
-  return p;
+  function compile(type, src) { const s=g.createShader(type); g.shaderSource(s,src); g.compileShader(s); return s; }
+  const p=g.createProgram(); g.attachShader(p,compile(g.VERTEX_SHADER,vSrc)); g.attachShader(p,compile(g.FRAGMENT_SHADER,fSrc)); g.linkProgram(p); return p;
 }
+function makeQuad(g) { const buf=g.createBuffer(); g.bindBuffer(g.ARRAY_BUFFER,buf); g.bufferData(g.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),g.STATIC_DRAW); return buf; }
 
-function makeQuad(g) {
-  const buf = g.createBuffer();
-  g.bindBuffer(g.ARRAY_BUFFER, buf);
-  g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), g.STATIC_DRAW);
-  return buf;
-}
+const progBg=makeProgram(gl,vertSrc,fragBg); gl.useProgram(progBg); makeQuad(gl);
+const posBg=gl.getAttribLocation(progBg,'a_pos'); gl.enableVertexAttribArray(posBg); gl.vertexAttribPointer(posBg,2,gl.FLOAT,false,0,0);
+const uTimeBg=gl.getUniformLocation(progBg,'u_time'),uResBg=gl.getUniformLocation(progBg,'u_res'),uTouchBg=gl.getUniformLocation(progBg,'u_touch'),uPulseBg=gl.getUniformLocation(progBg,'u_pulse');
 
-// BG setup
-const progBg = makeProgram(gl, vertSrc, fragBg);
-gl.useProgram(progBg);
-makeQuad(gl);
-const posBg = gl.getAttribLocation(progBg, 'a_pos');
-gl.enableVertexAttribArray(posBg);
-gl.vertexAttribPointer(posBg, 2, gl.FLOAT, false, 0, 0);
-const uTimeBg = gl.getUniformLocation(progBg, 'u_time');
-const uResBg = gl.getUniformLocation(progBg, 'u_res');
-const uTouchBg = gl.getUniformLocation(progBg, 'u_touch');
-const uPulseBg = gl.getUniformLocation(progBg, 'u_pulse');
-
-// Membrane setup
-const progMem = makeProgram(glm, vertSrc, fragMem);
-glm.useProgram(progMem);
-makeQuad(glm);
-const posMem = glm.getAttribLocation(progMem, 'a_pos');
-glm.enableVertexAttribArray(posMem);
-glm.vertexAttribPointer(posMem, 2, gl.FLOAT, false, 0, 0);
-glm.enable(glm.BLEND);
-glm.blendFunc(glm.SRC_ALPHA, glm.ONE_MINUS_SRC_ALPHA);
-const uTimeMem = glm.getUniformLocation(progMem, 'u_time');
-const uResMem = glm.getUniformLocation(progMem, 'u_res');
+const progMem=makeProgram(glm,vertSrc,fragMem); glm.useProgram(progMem); makeQuad(glm);
+const posMem=glm.getAttribLocation(progMem,'a_pos'); glm.enableVertexAttribArray(posMem); glm.vertexAttribPointer(posMem,2,gl.FLOAT,false,0,0);
+glm.enable(glm.BLEND); glm.blendFunc(glm.SRC_ALPHA,glm.ONE_MINUS_SRC_ALPHA);
+const uTimeMem=glm.getUniformLocation(progMem,'u_time'),uResMem=glm.getUniformLocation(progMem,'u_res');
 
 resize();
 window.addEventListener('resize', resize);
 
-let touchX = 0.5, touchY = 0.5, pulse = 0;
-
-window.addEventListener('mousemove', e => {
-  touchX = e.clientX / bg.width;
-  touchY = 1.0 - e.clientY / bg.height;
-});
-window.addEventListener('click', e => {
-  touchX = e.clientX / bg.width;
-  touchY = 1.0 - e.clientY / bg.height;
-  pulse = 1.0;
-});
-window.addEventListener('touchstart', e => {
-  const t = e.touches[0];
-  touchX = t.clientX / bg.width;
-  touchY = 1.0 - t.clientY / bg.height;
-  pulse = 1.0;
-}, { passive: true });
+let touchX=0.5, touchY=0.5, pulse=0;
+window.addEventListener('mousemove', e => { touchX=e.clientX/bg.width; touchY=1.0-e.clientY/bg.height; });
 
 function loop(t) {
-  const time = t * 0.001;
-
+  const time=t*0.001;
   gl.useProgram(progBg);
-  gl.uniform1f(uTimeBg, time);
-  gl.uniform2f(uResBg, bg.width, bg.height);
-  gl.uniform2f(uTouchBg, touchX, touchY);
-  gl.uniform1f(uPulseBg, pulse);
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
+  gl.uniform1f(uTimeBg,time); gl.uniform2f(uResBg,bg.width,bg.height); gl.uniform2f(uTouchBg,touchX,touchY); gl.uniform1f(uPulseBg,pulse);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   glm.useProgram(progMem);
-  glm.uniform1f(uTimeMem, time);
-  glm.uniform2f(uResMem, mem.width, mem.height);
-  glm.drawArrays(glm.TRIANGLE_STRIP, 0, 4);
-
-  pulse *= 0.92;
+  glm.uniform1f(uTimeMem,time); glm.uniform2f(uResMem,mem.width,mem.height);
+  glm.drawArrays(glm.TRIANGLE_STRIP,0,4);
+  pulse*=0.92;
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 
 // ---- INTERACCIÓN CÁPSULAS ----
 document.querySelectorAll('.capsula').forEach((cap, i) => {
-  function trigger(e) {
-    e.preventDefault();
-    const rect = cap.getBoundingClientRect();
-    touchX = (rect.left + rect.width / 2) / window.innerWidth;
-    touchY = 1.0 - (rect.top + rect.height / 2) / window.innerHeight;
-    pulse = 1.0;
+  let isDragging=false, startX, startY, origLeft, origTop, dragMoved=false;
 
-    cap.classList.add('active');
-    setTimeout(() => cap.classList.remove('active'), 500);
+  function getPos(e) { return e.touches ? {x:e.touches[0].clientX,y:e.touches[0].clientY} : {x:e.clientX,y:e.clientY}; }
 
-    const ring = document.createElement('div');
-    ring.className = 'pulse-ring';
-    const size = Math.max(rect.width, rect.height);
-    ring.style.cssText = `width:${size}px;height:${size}px;left:${rect.left + rect.width/2 - size/2}px;top:${rect.top + rect.height/2 - size/2}px;`;
-    document.body.appendChild(ring);
-    setTimeout(() => ring.remove(), 1000);
-
-    console.log('capsula', i, 'triggered');
-    // Aquí irá: reproducir sample de audio
+  function onStart(e) {
+    const pos=getPos(e); startX=pos.x; startY=pos.y;
+    const rect=cap.getBoundingClientRect(); origLeft=rect.left; origTop=rect.top;
+    isDragging=true; dragMoved=false; cap.style.transition='none';
   }
-  cap.addEventListener('click', trigger);
-  cap.addEventListener('touchstart', trigger, { passive: false });
+
+  function onMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    const pos=getPos(e); const dx=pos.x-startX; const dy=pos.y-startY;
+    if (Math.abs(dx)>5||Math.abs(dy)>5) dragMoved=true;
+    cap.style.left=(origLeft+dx)+'px'; cap.style.top=(origTop+dy)+'px';
+    cap.style.right='auto'; cap.style.bottom='auto';
+  }
+
+  function onEnd(e) {
+    if (!isDragging) return;
+    isDragging=false;
+    if (!dragMoved) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Bloqueo — no lanzar si ya suena algo
+      if (sonando) return;
+
+      const rect=cap.getBoundingClientRect();
+      touchX=(rect.left+rect.width/2)/window.innerWidth;
+      touchY=1.0-(rect.top+rect.height/2)/window.innerHeight;
+      pulse=1.0;
+
+      cap.classList.add('active');
+      setTimeout(()=>cap.classList.remove('active'),500);
+
+      const ring=document.createElement('div');
+      ring.className='pulse-ring';
+      const size=Math.max(rect.width,rect.height);
+      ring.style.cssText=`width:${size}px;height:${size}px;left:${rect.left+rect.width/2-size/2}px;top:${rect.top+rect.height/2-size/2}px;`;
+      document.body.appendChild(ring);
+      setTimeout(()=>ring.remove(),1000);
+
+      // Siguiente sample del pool de esta cápsula — sin repetir el anterior
+      capIndices[i] = (capIndices[i] + 1) % capPools[i].length;
+      const sample = capPools[i][capIndices[i]];
+
+      sonando = true;
+      audioActual = new Audio(sample.audio);
+      audioActual.play().catch(()=>{});
+
+      // Usar duración real cuando esté disponible
+      audioActual.addEventListener('loadedmetadata', () => {
+        mostrarTexto(sample.texto, audioActual.duration * 1000);
+      });
+      audioActual.addEventListener('ended', () => { 
+        sonando = false; 
+        audioActual = null;
+      });
+
+      // Fallback si metadata no carga
+      const palabras = sample.texto.split(' ').length;
+      const duracionEstimada = (palabras / 1.8) * 1000;
+      mostrarTexto(sample.texto, duracionEstimada);
+    }
+  }
+
+  cap.addEventListener('mousedown', onStart);
+  cap.addEventListener('touchstart', onStart, {passive:true});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('mouseup', onEnd);
+  window.addEventListener('touchend', onEnd);
 });
+
+// ---- GLÓBULOS ROJOS ----
+const globCanvas=document.getElementById('globulos');
+const globCtx=globCanvas.getContext('2d');
+function resizeGlob() { globCanvas.width=window.innerWidth; globCanvas.height=window.innerHeight; }
+resizeGlob();
+window.addEventListener('resize',resizeGlob);
+
+const globulos=Array.from({length:60},()=>({
+  x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+  rx:3+Math.random()*5, ry:0,
+  angle:Math.random()*Math.PI,
+  vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.2,
+  opacity:0.06+Math.random()*0.12,
+  rotSpeed:(Math.random()-0.5)*0.003
+}));
+globulos.forEach(g=>{g.ry=g.rx*0.55;});
+
+function drawGlobulos() {
+  globCtx.clearRect(0,0,globCanvas.width,globCanvas.height);
+  const w=globCanvas.width, h=globCanvas.height;
+  globulos.forEach(g=>{
+    g.x+=g.vx; g.y+=g.vy; g.angle+=g.rotSpeed;
+    if(g.x<-20) g.x=w+20; if(g.x>w+20) g.x=-20;
+    if(g.y<-20) g.y=h+20; if(g.y>h+20) g.y=-20;
+    globCtx.save();
+    globCtx.translate(g.x,g.y); globCtx.rotate(g.angle); globCtx.globalAlpha=g.opacity;
+    const grad=globCtx.createRadialGradient(0,0,g.rx*0.2,0,0,g.rx);
+    grad.addColorStop(0,'rgba(40,5,5,0.9)'); grad.addColorStop(0.4,'rgba(120,20,15,0.7)'); grad.addColorStop(1,'rgba(160,30,20,0)');
+    globCtx.beginPath(); globCtx.ellipse(0,0,g.rx,g.ry,0,0,Math.PI*2);
+    globCtx.fillStyle=grad; globCtx.fill();
+    globCtx.restore();
+  });
+  requestAnimationFrame(drawGlobulos);
+}
+drawGlobulos();
 </script>
 </body>
 </html>
